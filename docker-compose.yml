@@ -1,0 +1,29 @@
+version: '3.1'
+services:
+  nodered:
+    image: nodered/node-red-docker:v8
+    restart: always
+    volumes:
+      - ./data/node-red:/data
+    ports:
+      - 1234:1880
+    links:
+      - database
+  dashboard:
+    image: grafana/grafana:5.2.3
+    restart: always
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+      - ./grafana.ini:/etc/grafana/grafana.ini
+    ports:  
+      - 5678:3003
+    links:
+      - database
+  database:
+    image: influxdb
+    restart: always
+    volumes:
+      - ./data/influxdb:/var/lib/influxdb
+      - ./influxdb.conf:/etc/influxdb/influxdb.conf
+    environment:
+      INFLUXDB_DB: influxdb
